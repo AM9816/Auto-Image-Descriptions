@@ -277,7 +277,18 @@ def prepare_arguments():
         help='Device to use for inference (default: cuda)')
 
     parse.add_argument(
-        '-f', '--fast', type=bool, default=False,)
+        '-f', '--fast', type=bool, default=False,
+        help='pre configured fast / low memory mode, may result in poor'
+             'description quality (warning: overrides all arguments except '
+             'recursive search, device, batch size and stochasticity)')
+
+    if parse.fast:
+        parse.descriptioncomplexity = 1
+        parse.parallelpaths = 1
+        parse.maxtokens = 512
+        parse.forcedsize = 128
+        
+
 
     return parse
 
