@@ -14,6 +14,16 @@ import argparse
 cpu, gpu = torch.device("cpu"), torch.device("cuda")
 
 
+readable_image_ext = [
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".dib", ".tiff", ".tif",
+    ".eps", ".icns", ".ico", ".im", ".j2k", ".jp2", ".msp", ".pcx", ".pbm",
+    ".pgm", ".ppm", ".pnm", ".sgi", ".spider", ".tga", ".xbm", ".blp", ".cur",
+    ".dcx", ".dds", ".fli", ".flc", ".fpx", ".ftex", ".gbr", ".gd", ".imt",
+    ".iptc", ".naa", ".mcidas", ".mic", ".mpo", ".pcd", ".pixar", ".psd",
+    ".wal", ".xpm"
+]
+
+
 # load neural network and preprocessor for image description
 def get_model():
 
@@ -58,16 +68,18 @@ def image_directory_iterator(globIterator, bsize = 16,
         pb.set_description_str(
             f"reading {i}/{len(files)}, {failures} skipped")
         
-        # if ospath.isdir(imgPath):
-        #     continue
 
         
 
         try:
             pilImage = Image.open(imgPath).convert("RGBA")
+            
+            assert any(imgPath.endswith(ext) for ext in readable_image_ext)
+            
             # make sure it didnt accidently succeed in opening a non
             # image file as an image
             pilImage.verify()
+
             batch.append(pilImage)
             paths.append(imgPath)
         except Exception as e:
